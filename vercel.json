@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "name": "sachinthya-portfolio-admin-fullstack",
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/next"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  },
+  "installCommand": "npm install",
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next"
+}

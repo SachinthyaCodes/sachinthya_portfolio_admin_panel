@@ -1,0 +1,41 @@
+.particle-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+
+.particle-canvas.data-theme {
+  opacity: 0.6;
+}
+
+.particle-canvas.marketing-theme {
+  opacity: 0.6;
+}
+
+.particle-canvas.admin-theme {
+  opacity: 0.4;
+}
+
+.particle-canvas.neutral-theme {
+  opacity: 0.2;
+}
+
+/* Make particles responsive to different screen sizes */
+@media (max-width: 768px) {
+  .particle-canvas {
+    opacity: 0.3; /* Slightly reduced opacity on smaller screens */
+  }
+}
+
+/* Reduce intensity for devices with reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .particle-canvas {
+    opacity: 0.2 !important;
+  }
+}
