@@ -35,7 +35,8 @@ export default function LoginPage() {
         const errorData = await response.json()
         setError(errorData.message || 'Invalid credentials')
       }
-    } catch (error) {
+    } catch (loginError) {
+      console.error('Login error:', loginError);
       setError('Login failed. Please check your connection.')
     } finally {
       setLoading(false)

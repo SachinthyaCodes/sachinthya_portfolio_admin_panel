@@ -3,20 +3,20 @@ import { createSupabaseServerClient } from '@/lib/supabase';
 import jwt from 'jsonwebtoken';
 
 // Map database fields to frontend expected fields
-function mapDbToFrontend(dbProject: any) {
+function mapDbToFrontend(dbProject: Record<string, unknown>) {
   return {
-    id: dbProject.id.toString(), // Ensure ID is a string for API consistency
-    name: dbProject.name || dbProject.title,
+    id: String(dbProject.id), // Ensure ID is a string for API consistency
+    name: dbProject.name || dbProject.title, // Frontend expects 'name'
     category: dbProject.category,
     description: dbProject.description,
     comprehensiveSummary: dbProject.comprehensive_summary || dbProject.description,
-    tech: Array.isArray(dbProject.tech) ? dbProject.tech : (dbProject.technology ? dbProject.technology.split(',').map((t: string) => t.trim()) : []),
+    tech: Array.isArray(dbProject.tech) ? dbProject.tech : (typeof dbProject.technology === 'string' ? dbProject.technology.split(',').map((t: string) => t.trim()) : []),
     imageUrl: dbProject.image_url,
     links: Array.isArray(dbProject.links) ? dbProject.links : [],
     isShown: dbProject.is_shown,
     order: dbProject.order_index || dbProject.display_order || undefined,
-    createdAt: dbProject.created_at ? new Date(dbProject.created_at) : undefined,
-    updatedAt: dbProject.updated_at ? new Date(dbProject.updated_at) : undefined
+    createdAt: dbProject.created_at ? new Date(String(dbProject.created_at)) : undefined,
+    updatedAt: dbProject.updated_at ? new Date(String(dbProject.updated_at)) : undefined
   };
 }
 
@@ -111,7 +111,7 @@ export async function PATCH(
     const body = await request.json();
     
     // Map frontend fields to database fields for partial updates
-    const updateData: any = {};
+    const updateData: Record<string, unknown> = {};
     if (body.name !== undefined) {
       updateData.name = body.name;
       updateData.title = body.name; // Keep title synced
@@ -184,7 +184,7 @@ export async function PUT(
     const body = await request.json();
     
     // Map frontend fields to database fields
-    const updateData: any = {};
+    const updateData: Record<string, unknown> = {};
     if (body.name !== undefined) {
       updateData.name = body.name;
       updateData.title = body.name; // Keep title synced

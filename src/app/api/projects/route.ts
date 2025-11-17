@@ -7,25 +7,25 @@ const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 // Map database fields to frontend expected fields
-function mapDbToFrontend(dbProject: any) {
+function mapDbToFrontend(dbProject: Record<string, unknown>) {
   return {
-    id: dbProject.id.toString(), // Ensure ID is a string for API consistency
+    id: String(dbProject.id), // Ensure ID is a string for API consistency
     name: dbProject.name || dbProject.title, // Frontend expects 'name'
     category: dbProject.category,
     description: dbProject.description,
     comprehensiveSummary: dbProject.comprehensive_summary || dbProject.description,
-    tech: Array.isArray(dbProject.tech) ? dbProject.tech : (dbProject.technology ? dbProject.technology.split(',').map((t: string) => t.trim()) : []),
+    tech: Array.isArray(dbProject.tech) ? dbProject.tech : (typeof dbProject.technology === 'string' ? dbProject.technology.split(',').map((t: string) => t.trim()) : []),
     imageUrl: dbProject.image_url,
     links: Array.isArray(dbProject.links) ? dbProject.links : [],
     isShown: dbProject.is_shown,
     order: dbProject.order_index || dbProject.display_order || undefined,
-    createdAt: dbProject.created_at ? new Date(dbProject.created_at) : undefined,
-    updatedAt: dbProject.updated_at ? new Date(dbProject.updated_at) : undefined
+    createdAt: dbProject.created_at ? new Date(String(dbProject.created_at)) : undefined,
+    updatedAt: dbProject.updated_at ? new Date(String(dbProject.updated_at)) : undefined
   };
 }
 
 // Map frontend fields to database fields
-function mapFrontendToDb(frontendData: any) {
+function mapFrontendToDb(frontendData: Record<string, unknown>) {
   return {
     name: frontendData.name,
     title: frontendData.name, // Keep title for backward compatibility
@@ -49,9 +49,10 @@ function getAuthToken(request: NextRequest): string | null {
   return authHeader.substring(7);
 }
 
-function verifyToken(token: string): any {
+function verifyToken(token: string): Record<string, unknown> | null {
   try {
-    return jwt.verify(token, process.env.JWT_SECRET!);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!);
+    return typeof decoded === 'object' ? decoded as Record<string, unknown> : null;
   } catch (error) {
     return null;
   }
@@ -145,7 +146,7 @@ export async function POST(request: NextRequest) {
 
     // Parse JSON strings
     let tech: string[] = [];
-    let links: any[] = [];
+    let links: string[] = [];
     
     try {
       tech = techString ? JSON.parse(techString) : [];
