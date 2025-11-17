@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createSupabaseServerClient } from '@/lib/supabase';
+import { createSupabaseClient } from '@/lib/supabase-client';
 import { authenticateRequest } from '@/lib/auth';
 
 // PATCH /api/projects/[id]/toggle-visibility - Toggle project visibility
@@ -16,7 +16,7 @@ export async function PATCH(
       );
     }
 
-    const supabase = createSupabaseServerClient();
+    const supabase = createSupabaseClient();
 
     // Get the current project
     const { data: project, error: fetchError } = await supabase
@@ -106,7 +106,7 @@ export async function PATCH(
 }
 
 async function reorderDisplayAfterHiding(userId: string, hiddenDisplayOrder: number) {
-  const supabase = createSupabaseServerClient();
+  const supabase = createSupabaseClient();
   
   try {
     // Get all shown projects with display order higher than the hidden one

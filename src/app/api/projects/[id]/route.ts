@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createSupabaseServerClient } from '@/lib/supabase';
+import { createSupabaseClient } from '@/lib/supabase-client';
 import jwt from 'jsonwebtoken';
 
 // Map database fields to frontend expected fields
@@ -59,7 +59,7 @@ export async function GET(
       );
     }
 
-    const supabase = createSupabaseServerClient();
+    const supabase = createSupabaseClient();
 
     const { data: project, error } = await supabase
       .from('projects')
@@ -131,7 +131,7 @@ export async function PATCH(
     // Add updated timestamp
     updateData.updated_at = new Date().toISOString();
 
-    const supabase = createSupabaseServerClient();
+    const supabase = createSupabaseClient();
 
     const { data: updatedProject, error } = await supabase
       .from('projects')
@@ -201,7 +201,7 @@ export async function PUT(
     // Add updated timestamp
     updateData.updated_at = new Date().toISOString();
 
-    const supabase = createSupabaseServerClient();
+    const supabase = createSupabaseClient();
 
     const { data: project, error } = await supabase
       .from('projects')
@@ -259,7 +259,7 @@ export async function DELETE(
       );
     }
 
-    const supabase = createSupabaseServerClient();
+    const supabase = createSupabaseClient();
 
     const { error } = await supabase
       .from('projects')

@@ -1,10 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { createSupabaseClient } from '@/lib/supabase-client';
 import jwt from 'jsonwebtoken';
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 // Map database fields to frontend expected fields
 function mapDbToFrontend(dbProject: Record<string, unknown>) {
@@ -61,6 +57,7 @@ function verifyToken(token: string): Record<string, unknown> | null {
 // GET /api/projects - Fetch all projects for the authenticated user
 export async function GET(request: NextRequest) {
   try {
+    const supabase = createSupabaseClient();
     const token = getAuthToken(request);
     if (!token) {
       return NextResponse.json(
@@ -107,6 +104,7 @@ export async function GET(request: NextRequest) {
 // POST /api/projects - Create a new project
 export async function POST(request: NextRequest) {
   try {
+    const supabase = createSupabaseClient();
     console.log('Projects POST started');
     const token = getAuthToken(request);
     if (!token) {

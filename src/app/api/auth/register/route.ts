@@ -1,16 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { createSupabaseClient } from '@/lib/supabase-client';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
-
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { email, password, firstName, lastName } = body;
+    const supabase = createSupabaseClient();
+    const { email, password, firstName, lastName } = await request.json();
 
     if (!email || !password || !firstName || !lastName) {
       return NextResponse.json(

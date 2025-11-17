@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createSupabaseServerClient } from '@/lib/supabase';
+import { NextRequest, NextResponse } from 'next/server'
+import { createSupabaseClient } from '@/lib/supabase-client';
 import { authenticateRequest } from '@/lib/auth';
 
 // POST /api/projects/reorder - Reorder projects
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const supabase = createSupabaseServerClient();
+    const supabase = createSupabaseClient();
 
     // Update each project's order_index
     const updates = projects.map((project, index) => 
