@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { FaTimes } from 'react-icons/fa'
+import { FaTimes, FaPlus } from 'react-icons/fa'
 import ProjectForm from '@/components/projects/ProjectForm'
 import ConfirmModal from '@/components/ui/ConfirmModal'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
@@ -36,6 +36,8 @@ export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
   const [editingProject, setEditingProject] = useState<Project | null>(null)
+  const [showCreateModal, setShowCreateModal] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
   const [deleteModal, setDeleteModal] = useState<{ show: boolean; project: Project | null }>({
     show: false,
     project: null,
@@ -85,6 +87,7 @@ export default function ProjectsPage() {
 
       if (response.ok) {
         await fetchProjects()
+        setShowCreateModal(false)
         return true
       }
       return false
@@ -110,6 +113,7 @@ export default function ProjectsPage() {
       if (response.ok) {
         await fetchProjects()
         setEditingProject(null)
+        setShowEditModal(false)
         return true
       }
       return false
@@ -188,6 +192,12 @@ export default function ProjectsPage() {
 
   const handleDeleteProjectFromForm = async (project: Project) => {
     setDeleteModal({ show: true, project })
+    setShowEditModal(false)
+  }
+
+  const handleProjectClick = (project: Project) => {
+    setEditingProject(project)
+    setShowEditModal(true)
   }
 
   const handleDragStart = (e: React.DragEvent, project: Project) => {
@@ -282,9 +292,9 @@ export default function ProjectsPage() {
 
   return (
     <div className="projects-page-split">
-      {/* Two Column Layout */}
+      {/* Desktop: Two Column Layout, Mobile: Single Column */}
       <div className="projects-layout">
-        {/* Left Column - Project List */}
+        {/* Projects List - Always visible */}
         <div className="projects-sidebar">
           <div className="sidebar-header">
             <h2 className="sidebar-title">All Projects</h2>
@@ -296,7 +306,7 @@ export default function ProjectsPage() {
               <EmptyState 
                 icon="📂"
                 title="No projects yet"
-                description="Add your first project using the form →"
+                description="Click the + button to add your first project"
               />
             ) : (
               sortedProjects.map((project, index) => (
@@ -309,8 +319,8 @@ export default function ProjectsPage() {
                   } ${
                     !project.isShown ? 'hidden-project' : ''
                   }`}
-                  onClick={() => setEditingProject(project)}
-                  draggable={project.isShown} // Only allow dragging of shown projects
+                  onClick={() => handleProjectClick(project)}
+                  draggable={project.isShown}
                   onDragStart={(e) => project.isShown ? handleDragStart(e, project) : e.preventDefault()}
                   onDragOver={(e) => project.isShown ? handleDragOver(e, index) : undefined}
                   onDragLeave={project.isShown ? handleDragLeave : undefined}
@@ -342,8 +352,8 @@ export default function ProjectsPage() {
           </div>
         </div>
 
-        {/* Right Column - Project Form */}
-        <div className="project-form-panel">
+        {/* Desktop: Project Form Panel */}
+        <div className="project-form-panel desktop-only">
           <div className="form-panel-header">
             <h2 className="form-panel-title">
               {editingProject ? 'Edit Project' : 'Add New Project'}
@@ -370,6 +380,72 @@ export default function ProjectsPage() {
           </div>
         </div>
       </div>
+
+      {/* Mobile: Floating Add Button */}
+      <button 
+        className="floating-add-btn mobile-only"
+        onClick={() => setShowCreateModal(true)}
+        title="Add New Project"
+      >
+        <FaPlus />
+      </button>
+
+      {/* Mobile: Create Project Modal */}
+      {showCreateModal && (
+        <div className="modal-overlay">
+          <div className="modal-container project-form-modal">
+            <div className="modal-header">
+              <h2 className="modal-title">Add New Project</h2>
+              <button 
+                onClick={() => setShowCreateModal(false)} 
+                className="modal-close"
+              >
+                <FaTimes />
+              </button>
+            </div>
+            <div className="modal-content-form">
+              <ProjectForm
+                project={null}
+                onSubmit={handleCreateProject}
+                onClose={() => setShowCreateModal(false)}
+                isInline={true}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Mobile: Edit Project Modal */}
+      {showEditModal && editingProject && (
+        <div className="modal-overlay">
+          <div className="modal-container project-form-modal">
+            <div className="modal-header">
+              <h2 className="modal-title">Edit Project</h2>
+              <button 
+                onClick={() => {
+                  setShowEditModal(false)
+                  setEditingProject(null)
+                }} 
+                className="modal-close"
+              >
+                <FaTimes />
+              </button>
+            </div>
+            <div className="modal-content-form">
+              <ProjectForm
+                project={editingProject}
+                onSubmit={handleEditProject}
+                onClose={() => {
+                  setShowEditModal(false)
+                  setEditingProject(null)
+                }}
+                onDelete={handleDeleteProjectFromForm}
+                isInline={true}
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Delete Confirmation Modal */}
       <ConfirmModal
