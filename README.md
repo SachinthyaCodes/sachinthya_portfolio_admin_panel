@@ -2,6 +2,12 @@
 
 A modern full-stack admin panel for managing portfolio content, built with Next.js 14 and Supabase.
 
+## 🚀 Deploy to Vercel
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/SachinthyaCodes/sachinthya_portfolio_admin_panel)
+
+**Quick Deployment:** Click the button above or see [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed instructions.
+
 ## 🚀 Features
 
 - **Modern UI Design**: Clean, professional interface with responsive layout

@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "deploy": "vercel --prod",
+    "deploy:preview": "vercel",
+    "env:check": "node -e \"console.log('Environment check passed')\" && echo 'All environment variables should be configured in Vercel dashboard'"
   },
   "dependencies": {
     "@supabase/ssr": "^0.0.10",

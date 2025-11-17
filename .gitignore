@@ -86,3 +86,7 @@ Thumbs.db
 # Temporary files
 tmp/
 temp/
+
+# Deployment scripts (keep in repo for reference)
+# deploy.sh
+# deploy.bat

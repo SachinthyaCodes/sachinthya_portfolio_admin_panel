@@ -1,11 +1,48 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  images: {
-    domains: ['localhost'],
-    // Remove Firebase Storage domain
+  // Vercel deployment optimization
+  experimental: {
+    serverComponentsExternalPackages: ['@supabase/supabase-js'],
   },
-  // API routes are now handled internally by Next.js
-  // No need for external API rewrites
+  
+  // Image optimization for Vercel
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+      },
+    ],
+    unoptimized: false,
+  },
+
+  // API routes configuration
+  async headers() {
+    return [
+      {
+        source: '/api/:path*',
+        headers: [
+          { key: 'Access-Control-Allow-Credentials', value: 'true' },
+          { key: 'Access-Control-Allow-Origin', value: '*' },
+          {
+            key: 'Access-Control-Allow-Methods',
+            value: 'GET,OPTIONS,PATCH,DELETE,POST,PUT',
+          },
+          {
+            key: 'Access-Control-Allow-Headers',
+            value: 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization',
+          },
+        ],
+      },
+    ]
+  },
+
+  // Output configuration for Vercel (optional for optimization)
+  output: 'standalone',
 }
 
 module.exports = nextConfig
