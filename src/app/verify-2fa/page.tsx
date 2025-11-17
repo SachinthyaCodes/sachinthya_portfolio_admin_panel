@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import TwoFactorVerify from '@/components/auth/TwoFactorVerify';
 import '../../styles/two-factor.css';
 
-export default function TwoFactorPage() {
+function TwoFactorContent() {
   const [tempToken, setTempToken] = useState('');
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -46,5 +46,17 @@ export default function TwoFactorPage() {
       onSuccess={handleSuccess}
       onBack={handleBack}
     />
+  );
+}
+
+export default function TwoFactorPage() {
+  return (
+    <Suspense fallback={
+      <div className="loading-container">
+        <div>Loading...</div>
+      </div>
+    }>
+      <TwoFactorContent />
+    </Suspense>
   );
 }

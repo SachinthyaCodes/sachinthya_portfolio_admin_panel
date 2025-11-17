@@ -20,23 +20,6 @@ function mapDbToFrontend(dbProject: Record<string, unknown>) {
   };
 }
 
-// Map frontend fields to database fields
-function mapFrontendToDb(frontendData: Record<string, unknown>) {
-  return {
-    name: frontendData.name,
-    title: frontendData.name, // Keep title for backward compatibility
-    category: frontendData.category,
-    description: frontendData.description,
-    comprehensive_summary: frontendData.comprehensiveSummary,
-    tech: Array.isArray(frontendData.tech) ? frontendData.tech : [],
-    links: Array.isArray(frontendData.links) ? frontendData.links : [],
-    image_url: frontendData.imageUrl,
-    is_shown: frontendData.isShown,
-    order_index: frontendData.order,
-    display_order: frontendData.order // Keep display_order synced
-  };
-}
-
 function getAuthToken(request: NextRequest): string | null {
   const authHeader = request.headers.get('authorization');
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -49,7 +32,7 @@ function verifyToken(token: string): Record<string, unknown> | null {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET!);
     return typeof decoded === 'object' ? decoded as Record<string, unknown> : null;
-  } catch (error) {
+  } catch {
     return null;
   }
 }

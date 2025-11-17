@@ -42,7 +42,7 @@ export default function SecurityPage() {
       } else {
         setError('Failed to fetch user data');
       }
-    } catch (error) {
+    } catch {
       setError('Failed to fetch user data');
     } finally {
       setLoading(false);
@@ -84,7 +84,7 @@ export default function SecurityPage() {
       } else {
         setError(data.error || 'Failed to disable 2FA');
       }
-    } catch (error) {
+    } catch {
       setError('Failed to disable 2FA');
     } finally {
       setDisabling(false);
@@ -155,7 +155,7 @@ export default function SecurityPage() {
               <div className="enabled-content">
                 <div className="enabled-info">
                   <h3>2FA is currently enabled</h3>
-                  <p>Your account is protected by time-based one-time passwords (TOTP). You'll need to enter a code from your authenticator app when signing in.</p>
+                  <p>Your account is protected by time-based one-time passwords (TOTP). You&apos;ll need to enter a code from your authenticator app when signing in.</p>
                 </div>
                 
                 <div className="enabled-actions">

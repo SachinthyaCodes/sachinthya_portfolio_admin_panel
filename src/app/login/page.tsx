@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { FiEye, FiEyeOff, FiUser, FiLock } from 'react-icons/fi'
+import { FiEye, FiEyeOff } from 'react-icons/fi'
 import { API_ENDPOINTS } from '../../lib/api'
 
 export default function LoginPage() {

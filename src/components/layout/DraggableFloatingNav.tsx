@@ -126,7 +126,7 @@ export default function DraggableFloatingNav() {
       document.removeEventListener('touchmove', handleTouchMove)
       document.removeEventListener('touchend', handleTouchEnd)
     }
-  }, [isDragging, dragOffset])
+  }, [isDragging, dragOffset, handleMouseMove, handleMouseUp, handleTouchMove, handleTouchEnd])
 
   // Handle click when not dragging
   const handleClick = () => {

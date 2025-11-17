@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
     );
 
     // Return user data without password
-    const { password_hash, two_factor_enabled, ...userWithoutPassword } = users;
+    const { password_hash: _, two_factor_enabled, ...userWithoutPassword } = users;
 
     return NextResponse.json({
       access_token: token,

@@ -19,7 +19,7 @@ export class TwoFactorAuth {
   static async generateQRCode(otpauthUrl: string): Promise<string> {
     try {
       return await QRCode.toDataURL(otpauthUrl);
-    } catch (error) {
+    } catch {
       throw new Error('Failed to generate QR code');
     }
   }
@@ -35,7 +35,7 @@ export class TwoFactorAuth {
         token: token,
         window: 2 // Allow 2 time steps (60 seconds tolerance)
       });
-    } catch (error) {
+    } catch {
       return false;
     }
   }

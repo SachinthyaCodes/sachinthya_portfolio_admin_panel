@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     }
 
     const authToken = authHeader.substring(7);
-    const decoded = jwt.verify(authToken, process.env.JWT_SECRET!) as any;
+    const decoded = jwt.verify(authToken, process.env.JWT_SECRET!) as { userId: string; email: string };
     
     const supabase = createSupabaseClient();
     
