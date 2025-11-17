@@ -92,6 +92,8 @@ export async function PATCH(
   { params }: { params: { id: string } }
 ) {
   try {
+    console.log(`🔄 PATCH /api/projects/${params.id} - Partial project update`);
+    
     const token = getAuthToken(request);
     if (!token) {
       return NextResponse.json(
@@ -108,7 +110,60 @@ export async function PATCH(
       );
     }
 
-    const body = await request.json();
+    let body: Record<string, unknown>;
+    try {
+      // Check Content-Type to determine if it's FormData or JSON
+      const contentType = request.headers.get('content-type') || '';
+      console.log('📝 PATCH Content-Type:', contentType);
+      
+      if (contentType.includes('multipart/form-data')) {
+        // Handle FormData
+        const formData = await request.formData();
+        console.log('📝 PATCH FormData received:', Object.fromEntries(formData.entries()));
+        
+        // Convert FormData to object
+        body = {};
+        formData.forEach((value, key) => {
+          if (key === 'tech' || key === 'links') {
+            try {
+              body[key] = value ? JSON.parse(value as string) : [];
+            } catch {
+              body[key] = (value as string).split(',').map(item => item.trim()).filter(item => item);
+            }
+          } else if (key === 'isShown') {
+            body[key] = value === 'true';
+          } else if (key === 'order') {
+            body[key] = parseInt(value as string) || 0;
+          } else {
+            body[key] = value;
+          }
+        });
+        console.log('✅ Converted FormData to object:', body);
+      } else {
+        // Handle JSON
+        const rawBody = await request.text();
+        console.log('📝 Raw PATCH JSON body:', rawBody);
+        
+        if (!rawBody || rawBody.trim() === '') {
+          return NextResponse.json(
+            { error: 'Request body is empty' },
+            { status: 400 }
+          );
+        }
+        
+        body = JSON.parse(rawBody);
+        console.log('✅ Parsed PATCH JSON body:', body);
+      }
+    } catch (parseError) {
+      console.error('❌ PATCH body parsing error:', parseError);
+      return NextResponse.json(
+        { 
+          error: 'Invalid request body format',
+          details: `Body parsing failed: ${parseError}`
+        },
+        { status: 400 }
+      );
+    }
     
     // Map frontend fields to database fields for partial updates
     const updateData: Record<string, unknown> = {};
@@ -165,6 +220,8 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
+    console.log(`🔄 PUT /api/projects/${params.id} - Full project update`);
+    
     const token = getAuthToken(request);
     if (!token) {
       return NextResponse.json(
@@ -181,7 +238,60 @@ export async function PUT(
       );
     }
 
-    const body = await request.json();
+    let body: Record<string, unknown>;
+    try {
+      // Check Content-Type to determine if it's FormData or JSON
+      const contentType = request.headers.get('content-type') || '';
+      console.log('📝 PUT Content-Type:', contentType);
+      
+      if (contentType.includes('multipart/form-data')) {
+        // Handle FormData
+        const formData = await request.formData();
+        console.log('📝 PUT FormData received:', Object.fromEntries(formData.entries()));
+        
+        // Convert FormData to object
+        body = {};
+        formData.forEach((value, key) => {
+          if (key === 'tech' || key === 'links') {
+            try {
+              body[key] = value ? JSON.parse(value as string) : [];
+            } catch {
+              body[key] = (value as string).split(',').map(item => item.trim()).filter(item => item);
+            }
+          } else if (key === 'isShown') {
+            body[key] = value === 'true';
+          } else if (key === 'order') {
+            body[key] = parseInt(value as string) || 0;
+          } else {
+            body[key] = value;
+          }
+        });
+        console.log('✅ Converted FormData to object:', body);
+      } else {
+        // Handle JSON
+        const rawBody = await request.text();
+        console.log('📝 Raw PUT JSON body:', rawBody);
+        
+        if (!rawBody || rawBody.trim() === '') {
+          return NextResponse.json(
+            { error: 'Request body is empty' },
+            { status: 400 }
+          );
+        }
+        
+        body = JSON.parse(rawBody);
+        console.log('✅ Parsed PUT JSON body:', body);
+      }
+    } catch (parseError) {
+      console.error('❌ PUT body parsing error:', parseError);
+      return NextResponse.json(
+        { 
+          error: 'Invalid request body format',
+          details: `Body parsing failed: ${parseError}`
+        },
+        { status: 400 }
+      );
+    }
     
     // Map frontend fields to database fields
     const updateData: Record<string, unknown> = {};
