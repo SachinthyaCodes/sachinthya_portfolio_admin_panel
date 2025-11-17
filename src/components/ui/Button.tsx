@@ -6,7 +6,6 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'danger' | 'cancel' | 'secondary'
   size?: 'sm' | 'md' | 'lg'
   fullWidth?: boolean
-  loading?: boolean
 }
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -14,7 +13,6 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     variant = 'primary', 
     size = 'md', 
     fullWidth = false, 
-    loading = false, 
     children, 
     className = '', 
     disabled,
@@ -43,15 +41,10 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         ref={ref}
         className={combinedClasses}
-        disabled={disabled || loading}
+        disabled={disabled}
         {...props}
       >
-        {loading ? (
-          <div className="flex items-center justify-center">
-            <div className="loading-spinner w-4 h-4 mr-2"></div>
-            Loading...
-          </div>
-        ) : children}
+        {children}
       </button>
     )
   }

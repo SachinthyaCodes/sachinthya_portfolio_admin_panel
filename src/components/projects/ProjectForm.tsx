@@ -85,7 +85,6 @@ export default function ProjectForm({ project, onSubmit, onClose, onDelete, isIn
   const [links, setLinks] = useState<ProjectLink[]>(project?.links || [])
   const [image, setImage] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string>(project?.imageUrl || '')
-  const [loading, setLoading] = useState(false)
   const [techInput, setTechInput] = useState('')
   const [showTechDropdown, setShowTechDropdown] = useState(false)
   
@@ -168,7 +167,6 @@ export default function ProjectForm({ project, onSubmit, onClose, onDelete, isIn
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setLoading(true)
 
     try {
       const submitData = new FormData()
@@ -192,8 +190,6 @@ export default function ProjectForm({ project, onSubmit, onClose, onDelete, isIn
       }
     } catch (error) {
       console.error('Error submitting form:', error)
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -406,14 +402,12 @@ export default function ProjectForm({ project, onSubmit, onClose, onDelete, isIn
             type="button"
             onClick={onClose}
             variant="cancel"
-            disabled={loading}
           >
             Cancel
           </Button>
           <Button
             type="submit"
             variant="primary"
-            loading={loading}
           >
             {project ? 'Update Project' : 'Create Project'}
           </Button>
@@ -425,7 +419,6 @@ export default function ProjectForm({ project, onSubmit, onClose, onDelete, isIn
           <Button
             type="submit"
             variant="primary"
-            loading={loading}
           >
             {project ? 'Update Project' : 'Save Project'}
           </Button>
@@ -434,7 +427,6 @@ export default function ProjectForm({ project, onSubmit, onClose, onDelete, isIn
               type="button"
               variant="danger"
               onClick={() => onDelete(project)}
-              disabled={loading}
             >
               Delete Project
             </Button>
