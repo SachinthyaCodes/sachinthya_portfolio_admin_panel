@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createSupabaseServerClient } from '@/lib/supabase';
+import { createClient } from '@supabase/supabase-js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+
+// Using Supabase client instead of Prisma for better compatibility
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,16 +20,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const supabase = createSupabaseServerClient();
-
-    // Find user by email
-    const { data: user, error } = await supabase
+    // Find user by email using Supabase
+    const { data: users, error: dbError } = await supabase
       .from('users')
-      .select('*')
+      .select('id, email, password_hash, first_name, last_name, is_active')
       .eq('email', email.toLowerCase())
       .single();
 
-    if (error || !user) {
+    if (dbError || !users) {
       return NextResponse.json(
         { error: 'Invalid credentials' },
         { status: 401 }
@@ -32,7 +35,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate password
-    const isValidPassword = await bcrypt.compare(password, user.password_hash);
+    const isValidPassword = await bcrypt.compare(password, users.password_hash);
     if (!isValidPassword) {
       return NextResponse.json(
         { error: 'Invalid credentials' },
@@ -41,7 +44,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if user is active
-    if (!user.is_active) {
+    if (!users.is_active) {
       return NextResponse.json(
         { error: 'Account is deactivated' },
         { status: 401 }
@@ -51,15 +54,15 @@ export async function POST(request: NextRequest) {
     // Generate JWT token
     const token = jwt.sign(
       { 
-        userId: user.id, 
-        email: user.email 
+        userId: users.id, 
+        email: users.email 
       },
       process.env.JWT_SECRET!,
       { expiresIn: '24h' }
     );
 
     // Return user data without password
-    const { password_hash: _, ...userWithoutPassword } = user;
+    const { password_hash: _, ...userWithoutPassword } = users;
 
     return NextResponse.json({
       access_token: token,

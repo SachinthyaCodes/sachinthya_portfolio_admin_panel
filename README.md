@@ -1,178 +1,178 @@
-# Sachinthya Portfolio Admin Panel
+# Sachinthya Portfolio Admin Panel - Full Stack
 
-A comprehensive admin panel for managing your portfolio content, built with Next.js 15 (frontend) and NestJS (backend).
+A modern full-stack admin panel for managing portfolio content, built with Next.js 14 and Supabase.
 
 ## 🚀 Features
 
-### Frontend (Next.js 15)
-- **Modern UI Design**: Clean, professional interface with Inter font
-- **Responsive Layout**: Works seamlessly on desktop and mobile
-- **Dashboard Overview**: Statistics, quick actions, and recent activity
-- **Portfolio Management**: Create, edit, and organize projects
-- **Testimonial Management**: Manage client testimonials
-- **Media Upload**: Handle images and file uploads
-- **Authentication**: Secure login system
-- **Real-time Updates**: Modern React 19 with state management
-
-### Backend (NestJS)
-- **RESTful API**: Complete CRUD operations for all entities
-- **JWT Authentication**: Secure token-based authentication
-- **Database Integration**: TypeORM with MySQL support
-- **File Upload**: Multer integration for media handling
-- **API Documentation**: Swagger/OpenAPI documentation
-- **Validation**: Class-validator for input validation
-- **TypeScript**: Full type safety throughout
+- **Modern UI Design**: Clean, professional interface with responsive layout
+- **Dashboard Overview**: Statistics, quick actions, and project management
+- **Portfolio Management**: Create, edit, delete, and reorder projects
+- **Drag & Drop**: Intuitive project reordering with visual feedback
+- **Real-time Updates**: Modern React 18 with state management
+- **Authentication**: Secure JWT-based authentication
+- **Field Mapping**: Seamless database-frontend field translation
+- **Form Validation**: Comprehensive client and server-side validation
 
 ## 📁 Project Structure
 
 ```
-sachinthya_portfolio_admin_panel/
-├── frontend/                 # Next.js 15 application
-│   ├── src/
-│   │   ├── app/             # App directory (Next.js 13+ structure)
-│   │   │   ├── dashboard/   # Dashboard pages
-│   │   │   ├── login/       # Authentication pages
-│   │   │   └── layout.tsx   # Root layout
-│   │   ├── components/      # React components
-│   │   │   ├── layout/      # Layout components (Sidebar, Header)
-│   │   │   └── dashboard/   # Dashboard-specific components
-│   │   └── styles/          # Global styles
-│   ├── package.json
-│   └── next.config.js
-│
-└── backend/                 # NestJS application
-    ├── src/
-    │   ├── auth/           # Authentication module
-    │   ├── user/           # User management
-    │   ├── portfolio/      # Portfolio projects
-    │   ├── testimonial/    # Testimonials
-    │   ├── media/          # File upload handling
-    │   └── main.ts         # Application entry point
-    ├── package.json
-    └── .env                # Environment configuration
+sachinthya_portfolio_fullstack/
+├── src/
+│   ├── app/                 # Next.js 14 app directory
+│   │   ├── dashboard/       # Dashboard pages
+│   │   │   └── projects/    # Projects management
+│   │   ├── login/          # Authentication page
+│   │   ├── api/            # API routes
+│   │   │   ├── auth/       # Authentication endpoints
+│   │   │   └── projects/   # Projects CRUD endpoints
+│   │   └── layout.tsx      # Root layout
+│   ├── components/         # React components
+│   │   ├── layout/         # Layout components
+│   │   ├── projects/       # Project-specific components
+│   │   └── ui/            # Reusable UI components
+│   └── lib/               # Utilities and configurations
+│       └── supabase.ts    # Supabase client setup
+├── public/                # Static assets
+├── package.json
+└── .env.local            # Environment configuration
 ```
 
 ## 🛠 Prerequisites
 
-- Node.js 18+ 
-- MySQL database
+- Node.js 18+
+- Supabase account and project
 - npm or yarn package manager
 
 ## ⚙️ Installation & Setup
 
-### 1. Clone and Setup
+### 1. Clone and Navigate
 
 ```bash
-# Navigate to the admin panel directory
-cd "D:\Projects\Portfolio\sachinthya_portfolio_admin_panel"
+cd "d:\Projects\Portfolio\sachinthya_portfolio_fullstack"
 ```
 
-### 2. Backend Setup
+### 2. Install Dependencies
 
 ```bash
-# Navigate to backend directory
-cd backend
-
-# Install dependencies
 npm install
-
-# Setup environment variables
-cp .env.example .env
-# Edit .env with your database credentials and settings
-
-# Start the backend server
-npm run start:dev
 ```
 
-The backend will be available at `http://localhost:3000`
-API documentation at `http://localhost:3000/api/docs`
+### 3. Environment Configuration
 
-### 3. Frontend Setup
+Update `.env.local` with your Supabase credentials:
 
 ```bash
-# Navigate to frontend directory (new terminal)
-cd frontend
+# Supabase Configuration
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 
-# Install dependencies
-npm install
+# JWT Configuration
+JWT_SECRET=your_jwt_secret_key
 
-# Start the development server
+# API Configuration
+NEXT_PUBLIC_API_URL=/api
+```
+
+### 4. Start Development Server
+
+```bash
 npm run dev
 ```
 
-The frontend will be available at `http://localhost:3001`
-
-### 4. Database Setup
-
-Create a MySQL database and update the `.env` file in the backend directory:
-
-```bash
-DB_TYPE=mysql
-DB_HOST=localhost
-DB_PORT=3306
-DB_USERNAME=your_username
-DB_PASSWORD=your_password
-DB_DATABASE=portfolio_admin
-```
-
-The application will automatically create the required tables when you start the backend.
+The application will be available at `http://localhost:3000`
 
 ## 🔑 Default Credentials
 
 **Admin Login:**
-- Email: `admin@sachinthya.com`
+- Email: `admin@sachinthya.dev`
 - Password: `admin123`
+
+## 🗄️ Database Schema
+
+The application uses these Supabase tables:
+
+### Users Table
+```sql
+- id (uuid, primary key)
+- email (text, unique)
+- password_hash (text)
+- first_name (text)
+- last_name (text)
+- is_active (boolean)
+- created_at (timestamp)
+- updated_at (timestamp)
+```
+
+### Projects Table
+```sql
+- id (uuid, primary key)
+- name (text)
+- title (text) -- for backward compatibility
+- category (text)
+- description (text)
+- comprehensive_summary (text)
+- tech (jsonb array)
+- links (jsonb array)
+- image_url (text)
+- is_shown (boolean)
+- order_index (integer)
+- display_order (integer) -- for backward compatibility
+- user_id (uuid, foreign key)
+- created_at (timestamp)
+- updated_at (timestamp)
+```
 
 ## 📊 API Endpoints
 
 ### Authentication
 - `POST /api/auth/login` - User login
-- `POST /api/auth/logout` - User logout
+- `POST /api/auth/register` - User registration
 
-### Portfolio
-- `GET /api/portfolio` - Get published projects (public)
-- `GET /api/portfolio/admin` - Get all projects (admin)
-- `POST /api/portfolio` - Create project
-- `PUT /api/portfolio/:id` - Update project
-- `DELETE /api/portfolio/:id` - Delete project
+### Projects
+- `GET /api/projects` - Get all projects (authenticated)
+- `POST /api/projects` - Create project (FormData)
+- `GET /api/projects/[id]` - Get specific project
+- `PUT /api/projects/[id]` - Update project (full)
+- `PATCH /api/projects/[id]` - Update project (partial)
+- `DELETE /api/projects/[id]` - Delete project
 
-### Testimonials
-- `GET /api/testimonials` - Get published testimonials (public)
-- `GET /api/testimonials/admin` - Get all testimonials (admin)
+## 🎨 Key Components
 
-### Media
-- `POST /api/media/upload` - Upload file
-- `DELETE /api/media/:filename` - Delete file
+### Dashboard Features
+- **Project Cards**: Display with drag-and-drop reordering
+- **Visibility Toggle**: Show/hide projects with automatic reordering
+- **Inline Editing**: Quick project modifications
+- **Form Validation**: Comprehensive validation with error handling
+- **Field Mapping**: Automatic translation between database and frontend formats
 
-### User
-- `GET /api/user/profile` - Get current user profile
-- `PUT /api/user/profile` - Update user profile
+### UI Components
+- **FormField**: Labeled form inputs with validation
+- **LoadingScreen**: Full-screen loading with progress
+- **ToggleSwitch**: Custom styled toggle switches
+- **Button**: Multiple variants (primary, cancel, danger)
+- **Modal**: Reusable modal container
 
-## 🎨 UI Components
+## 🔄 Field Mapping System
 
-The admin panel includes these pre-built components:
+The application includes automatic field mapping between database and frontend:
 
-- **Sidebar**: Navigation with section grouping
-- **Header**: User menu and notifications
-- **Stats Cards**: Dashboard metrics display
-- **Quick Actions**: Common task shortcuts
-- **Recent Activity**: Activity timeline
-- **Forms**: Styled form inputs and validation
-- **Tables**: Data display with sorting
-- **Buttons**: Multiple variants and states
-- **Cards**: Content containers with headers
+**Database → Frontend:**
+- `title` → `name`
+- `is_shown` → `isShown`  
+- `display_order` → `order`
+- `technology` (string) → `tech` (array)
 
 ## 🔒 Security Features
 
 - **JWT Authentication**: Secure token-based authentication
-- **Route Guards**: Protected admin routes
-- **Input Validation**: Server-side validation with class-validator
-- **CORS Configuration**: Proper cross-origin setup
-- **File Upload Security**: Type and size restrictions
+- **Route Protection**: Protected dashboard routes
+- **Input Validation**: Server-side validation
+- **SQL Injection Prevention**: Parameterized queries via Supabase
+- **XSS Protection**: Input sanitization
 
 ## 🚀 Development Scripts
 
-### Frontend
 ```bash
 npm run dev         # Start development server
 npm run build       # Build for production
@@ -180,70 +180,38 @@ npm run start       # Start production server
 npm run lint        # Run ESLint
 ```
 
-### Backend
-```bash
-npm run start:dev   # Start development server with hot reload
-npm run start       # Start production server
-npm run build       # Build TypeScript
-npm run test        # Run tests
-```
-
 ## 📝 Environment Variables
 
-### Backend (.env)
 ```bash
-# Database
-DB_TYPE=mysql
-DB_HOST=localhost
-DB_PORT=3306
-DB_USERNAME=root
-DB_PASSWORD=password
-DB_DATABASE=portfolio_admin
+# Supabase Configuration
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 
-# JWT
-JWT_SECRET=your-super-secret-jwt-key
-JWT_EXPIRES_IN=7d
+# JWT Configuration
+JWT_SECRET=your_jwt_secret_key
 
-# Application
-PORT=3000
-NODE_ENV=development
-MAX_FILE_SIZE=10485760
-UPLOAD_PATH=./uploads
-FRONTEND_URL=http://localhost:3001
+# API Configuration  
+NEXT_PUBLIC_API_URL=/api
 ```
 
-## 🎯 Next Steps
+## 🔧 Technology Stack
 
-1. **Database Setup**: Create MySQL database and configure connection
-2. **Install Dependencies**: Run `npm install` in both frontend and backend directories
-3. **Environment Configuration**: Update `.env` files with your settings
-4. **Start Development**: Run both frontend and backend servers
-5. **Login**: Use default credentials to access the admin panel
+**Framework:** Next.js 14 with App Router
+**Database:** Supabase (PostgreSQL)
+**Authentication:** JWT with bcrypt
+**Styling:** CSS Modules with CSS Variables
+**UI:** React 18 with TypeScript
+**State Management:** React Hooks
+**Deployment Ready:** Vercel compatible
 
-## 🔧 Customization
+## ✨ Recent Updates
 
-- **Styling**: Modify `frontend/src/styles/globals.css` for design changes
-- **Components**: Add new components in `frontend/src/components/`
-- **API Endpoints**: Extend backend modules in `backend/src/`
-- **Database Schema**: Modify entities in respective module directories
+- ✅ **Migration Complete**: Successfully migrated from Firebase + Express to Next.js + Supabase
+- ✅ **Field Mapping**: Implemented automatic database-frontend field translation
+- ✅ **FormData Support**: Fixed project creation with proper FormData parsing
+- ✅ **Code Cleanup**: Removed all Prisma dependencies and legacy files
+- ✅ **Error Resolution**: Fixed all TypeScript and JSX compilation errors
+- ✅ **Security**: Updated dependencies and removed hardcoded credentials
 
-## 📚 Technology Stack
-
-**Frontend:**
-- Next.js 15 with App Router
-- React 19
-- TypeScript
-- CSS Variables (Modern styling)
-- React Icons
-- Axios for API calls
-
-**Backend:**
-- NestJS
-- TypeORM
-- MySQL
-- JWT Authentication
-- Swagger/OpenAPI
-- Class Validator
-- Multer (File uploads)
-
-This admin panel provides a solid foundation for managing your portfolio content with modern development practices and a professional user interface.
+This full-stack application provides a complete portfolio management solution with modern development practices and clean architecture.

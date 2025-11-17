@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createSupabaseServerClient } from '@/lib/supabase';
+import { createClient } from '@supabase/supabase-js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,8 +18,6 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-
-    const supabase = createSupabaseServerClient();
 
     // Check if user already exists
     const { data: existingUser } = await supabase
@@ -37,15 +39,13 @@ export async function POST(request: NextRequest) {
     // Create user
     const { data: user, error } = await supabase
       .from('users')
-      .insert([
-        {
-          email: email.toLowerCase(),
-          password_hash: passwordHash,
-          first_name: firstName,
-          last_name: lastName,
-          is_active: true,
-        }
-      ])
+      .insert({
+        email: email.toLowerCase(),
+        password_hash: passwordHash,
+        first_name: firstName,
+        last_name: lastName,
+        is_active: true,
+      })
       .select()
       .single();
 

@@ -442,10 +442,10 @@ export default function ProjectForm({ project, onSubmit, onClose, onDelete, isIn
         </div>
       )}
     </form>
-  )
+  );
 
   if (isInline) {
-    return formContent
+    return formContent;
   }
 
   return (
@@ -462,5 +462,5 @@ export default function ProjectForm({ project, onSubmit, onClose, onDelete, isIn
         {formContent}
       </div>
     </div>
-  )
+  );
 }

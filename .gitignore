@@ -1,32 +1,38 @@
 # Dependencies
 node_modules/
-frontend/node_modules/
-backend/node_modules/
-backend/dist/
+/.pnp
+.pnp.js
 
-# Environment files
+# Testing
+/coverage
+
+# Next.js
+/.next/
+/out/
+
+# Production
+/build
+
+# Environment variables
 .env
-.env.local
+.env*.local
 .env.development.local
 .env.test.local
 .env.production.local
-frontend/.env
-frontend/.env.local
-backend/.env
 
-# Build outputs
-frontend/.next/
-frontend/out/
-frontend/build/
-backend/dist/
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
 
 # Logs
-*.log
-logs/
-frontend/npm-debug.log*
-frontend/yarn-debug.log*
-frontend/yarn-error.log*
-backend/npm-debug.log*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+lerna-debug.log*
 
 # Runtime data
 pids
@@ -34,40 +40,49 @@ pids
 *.seed
 *.pid.lock
 
-# Coverage directory
-coverage/
+# Coverage directory used by tools like istanbul
+coverage
+*.lcov
 
-# Firebase
-.firebase/
-firebase-debug.log
-firestore-debug.log
+# nyc test coverage
+.nyc_output
 
-# Vercel
-.vercel
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Optional npm cache directory
+.npm
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# parcel-bundler cache (https://parceljs.org/)
+.cache
+.parcel-cache
 
 # IDE files
 .vscode/
 .idea/
 *.swp
 *.swo
+.project
 
 # OS files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
-
-# Package manager files
-package-lock.json
-yarn.lock
-pnpm-lock.yaml
 
 # Temporary files
 tmp/
 temp/
-
-# Database
-*.db
-*.sqlite
-
-# Uploads
-uploads/
-public/uploads/

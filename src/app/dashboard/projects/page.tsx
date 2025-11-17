@@ -9,20 +9,25 @@ import EmptyState from '@/components/ui/EmptyState'
 import { API_ENDPOINTS } from '../../../lib/api'
 import './projects.css'
 
+interface ProjectLink {
+  type: 'GitHub' | 'HuggingFace' | 'Kaggle' | 'Medium' | 'Live Demo' | 'Documentation' | 'Other'
+  url: string
+  label?: string
+}
+
 interface Project {
-  id: string
-  title: string // Changed from 'name' to 'title'
+  id: string  // Changed to string to match API_ENDPOINTS.BY_ID expectation
+  name: string // API returns mapped 'name' field
   category: string
   description: string
-  technology: string // Changed from 'tech: string[]' to 'technology: string'
-  status: 'active' | 'completed' | 'on-hold'
-  priority: 'low' | 'medium' | 'high'
-  order_index: number
-  is_shown: boolean // Changed from 'isShown' to 'is_shown'
-  display_order?: number | null // Changed from 'order' to 'display_order'
-  user_id: string
-  created_at: string // Changed from 'createdAt?: Date' to 'created_at: string'
-  updated_at: string // Changed from 'updatedAt?: Date' to 'updated_at: string'
+  comprehensiveSummary: string
+  tech: string[] // API returns mapped 'tech' array
+  imageUrl?: string
+  links: ProjectLink[] // ProjectForm expects ProjectLink objects
+  isShown: boolean // API returns mapped 'isShown' field
+  order?: number // API returns mapped 'order' field
+  createdAt?: Date
+  updatedAt?: Date
 }
 
 // Removed ProjectLink interface - simplified structure
@@ -148,8 +153,8 @@ export default function ProjectsPage() {
 
       if (response.ok) {
         // If project was shown and is being hidden, reorder remaining shown projects
-        if (project.is_shown && typeof project.display_order === 'number') {
-          await reorderProjectsAfterHiding(project.display_order)
+        if (project.isShown && typeof project.order === 'number') {
+          await reorderProjectsAfterHiding(project.order)
         }
         await fetchProjects()
       }
@@ -161,18 +166,18 @@ export default function ProjectsPage() {
   const reorderProjectsAfterHiding = async (hiddenProjectOrder: number) => {
     try {
       const token = localStorage.getItem('token')
-      const shownProjectsToReorder = projects.filter(p => p.is_shown && typeof p.display_order === 'number' && p.display_order > hiddenProjectOrder)
+      const shownProjectsToReorder = projects.filter(p => p.isShown && typeof p.order === 'number' && p.order > hiddenProjectOrder)
       
       // Update each project's order to move up by 1
       for (const proj of shownProjectsToReorder) {
-        if (typeof proj.display_order === 'number') {
+        if (typeof proj.order === 'number') {
           await fetch(API_ENDPOINTS.PROJECTS.BY_ID(proj.id), {
             method: 'PATCH',
             headers: {
               'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ display_order: proj.display_order - 1 })
+            body: JSON.stringify({ order: proj.order - 1 })
           })
         }
       }
@@ -210,7 +215,7 @@ export default function ProjectsPage() {
     }
 
     // Only allow drag and drop between shown projects (order 1-5)
-    if (!draggedProject.is_shown || !targetProject.is_shown) {
+    if (!draggedProject.isShown || !targetProject.isShown) {
       setDraggedProject(null)
       return
     }
@@ -248,21 +253,21 @@ export default function ProjectsPage() {
     setDraggedProject(null)
   }
 
-  // Smart sorting: First 5 shown projects by order, then hidden projects by title
+  // Smart sorting: First 5 shown projects by order, then hidden projects by name
   const sortedProjects = [...projects].sort((a, b) => {
-    // If both projects are shown, sort by display_order
-    if (a.is_shown && b.is_shown) {
-      return (a.display_order || 1) - (b.display_order || 1)
+    // If both projects are shown, sort by order
+    if (a.isShown && b.isShown) {
+      return (a.order || 1) - (b.order || 1)
     }
     
-    // If both projects are hidden, sort by title
-    if (!a.is_shown && !b.is_shown) {
-      return a.title.localeCompare(b.title)
+    // If both projects are hidden, sort by name
+    if (!a.isShown && !b.isShown) {
+      return a.name.localeCompare(b.name)
     }
     
     // Shown projects always come before hidden projects
-    if (a.is_shown && !b.is_shown) return -1
-    if (!a.is_shown && b.is_shown) return 1
+    if (a.isShown && !b.isShown) return -1
+    if (!a.isShown && b.isShown) return 1
     
     return 0
   })
@@ -302,30 +307,29 @@ export default function ProjectsPage() {
                   } ${
                     dragOverIndex === index ? 'drag-over' : ''
                   } ${
-                    !project.is_shown ? 'hidden-project' : ''
-                  }`}
+                    !project.isShown ? 'hidden-project' : ''
                   }`}
                   onClick={() => setEditingProject(project)}
-                  draggable={project.is_shown} // Only allow dragging of shown projects
-                  onDragStart={(e) => project.is_shown ? handleDragStart(e, project) : e.preventDefault()}
-                  onDragOver={(e) => project.is_shown ? handleDragOver(e, index) : undefined}
-                  onDragLeave={project.is_shown ? handleDragLeave : undefined}
-                  onDrop={(e) => project.is_shown ? handleDrop(e, project) : undefined}
+                  draggable={project.isShown} // Only allow dragging of shown projects
+                  onDragStart={(e) => project.isShown ? handleDragStart(e, project) : e.preventDefault()}
+                  onDragOver={(e) => project.isShown ? handleDragOver(e, index) : undefined}
+                  onDragLeave={project.isShown ? handleDragLeave : undefined}
+                  onDrop={(e) => project.isShown ? handleDrop(e, project) : undefined}
                   style={{ cursor: 'pointer' }}
                 >
                   <div className="project-item-header">
                     <div className="project-item-info">
-                      <h3 className="project-item-name">{project.title}</h3>
+                      <h3 className="project-item-name">{project.name}</h3>
                       <span className="project-item-category">{project.category}</span>
                     </div>
                     <div className="project-item-status">
                       <span className="project-order">
-                        {project.is_shown ? `#${project.display_order || 1}` : '●'}
+                        {project.isShown ? `#${project.order || 1}` : '●'}
                       </span>
                       <label className="visibility-toggle" onClick={(e) => e.stopPropagation()}>
                         <input
                           type="checkbox"
-                          checked={project.is_shown}
+                          checked={project.isShown}
                           onChange={() => handleToggleVisibility(project)}
                         />
                         <span className="toggle-slider"></span>
