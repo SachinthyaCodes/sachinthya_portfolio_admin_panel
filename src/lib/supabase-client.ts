@@ -11,19 +11,39 @@ export function createSupabaseClient(): SupabaseClient {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   
+  // Enhanced logging for debugging Vercel deployment
+  console.log('🔧 Supabase Client Initialization:', {
+    hasUrl: !!supabaseUrl,
+    hasServiceKey: !!supabaseServiceKey,
+    nodeEnv: process.env.NODE_ENV,
+    vercelEnv: process.env.VERCEL_ENV
+  });
+  
   if (!supabaseUrl || !supabaseServiceKey) {
-    // During build time, create a dummy client to avoid errors
-    if (process.env.NODE_ENV === 'production' && !process.env.VERCEL_ENV) {
-      // This is a build time, return a dummy client
-      const dummyClient = createClient('https://dummy.supabase.co', 'dummy-key');
-      return dummyClient;
-    }
+    const error = `Missing Supabase configuration: 
+    - NEXT_PUBLIC_SUPABASE_URL: ${supabaseUrl ? 'SET' : 'MISSING'}
+    - SUPABASE_SERVICE_ROLE_KEY: ${supabaseServiceKey ? 'SET' : 'MISSING'}
     
-    throw new Error('Missing Supabase configuration. Please check your environment variables.');
+    Please check your environment variables in Vercel dashboard.`;
+    
+    console.error('❌ Supabase Configuration Error:', error);
+    throw new Error(error);
   }
   
-  supabaseClient = createClient(supabaseUrl, supabaseServiceKey);
-  return supabaseClient;
+  try {
+    supabaseClient = createClient(supabaseUrl, supabaseServiceKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    });
+    
+    console.log('✅ Supabase client created successfully');
+    return supabaseClient;
+  } catch (error) {
+    console.error('❌ Failed to create Supabase client:', error);
+    throw new Error(`Failed to initialize Supabase client: ${error}`);
+  }
 }
 
 // Backward compatibility

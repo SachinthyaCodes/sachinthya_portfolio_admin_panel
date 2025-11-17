@@ -5,9 +5,27 @@ import jwt from 'jsonwebtoken';
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createSupabaseClient();
+    console.log('🚀 Login API called');
+    
+    // Check if we can create Supabase client
+    let supabase;
+    try {
+      supabase = createSupabaseClient();
+    } catch (clientError) {
+      console.error('❌ Supabase client creation failed:', clientError);
+      return NextResponse.json(
+        { 
+          error: 'Database configuration error',
+          details: process.env.NODE_ENV === 'development' ? String(clientError) : 'Please check server configuration'
+        },
+        { status: 500 }
+      );
+    }
+    
     const body = await request.json();
     const { email, password } = body;
+
+    console.log('📧 Login attempt for email:', email);
 
     if (!email || !password) {
       return NextResponse.json(
