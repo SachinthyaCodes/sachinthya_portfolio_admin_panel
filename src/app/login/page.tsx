@@ -29,11 +29,18 @@ export default function LoginPage() {
 
       if (response.ok) {
         const data = await response.json()
-        localStorage.setItem('token', data.access_token)
-        router.push('/dashboard')
+        
+        // Check if 2FA is required
+        if (data.requires2FA) {
+          localStorage.setItem('tempToken', data.tempToken)
+          router.push('/verify-2fa')
+        } else {
+          localStorage.setItem('token', data.access_token)
+          router.push('/dashboard')
+        }
       } else {
         const errorData = await response.json()
-        setError(errorData.message || 'Invalid credentials')
+        setError(errorData.error || 'Invalid credentials')
       }
     } catch (loginError) {
       console.error('Login error:', loginError);
@@ -44,107 +51,73 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Portfolio Admin
-          </h1>
-          <p className="text-gray-600">
-            Sign in to manage your portfolio content
-          </p>
+    <div className="login-container">
+      <div className="login-card">
+        <div className="login-header">
+          <h1 className="login-title">Admin</h1>
+          <p className="login-subtitle">Sign in to manage your portfolio</p>
         </div>
 
-        <div className="card">
-          <div className="card-content">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {error && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-                  {error}
-                </div>
-              )}
+        <form onSubmit={handleSubmit} className="login-form">
+          {error && (
+            <div className="error-message">
+              {error}
+            </div>
+          )}
 
-              {/* Default credentials notice */}
-              <div className="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded-lg text-sm">
-                <p className="font-medium">Default Admin Credentials:</p>
-                <p>Email: <code className="bg-blue-100 px-1 rounded">admin@sachinthya.dev</code></p>
-                <p>Password: <code className="bg-blue-100 px-1 rounded">admin123</code></p>
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="email" className="form-label">
-                  Email Address
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
-                    <FiUser className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <input
-                    id="email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="form-input pl-10"
-                    placeholder="admin@sachinthya.dev"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="password" className="form-label">
-                  Password
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
-                    <FiLock className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <input
-                    id="password"
-                    type={showPassword ? 'text' : 'password'}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="form-input pl-10 pr-10"
-                    placeholder="Enter your password"
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                  >
-                    {showPassword ? (
-                      <FiEyeOff className="h-5 w-5 text-gray-400" />
-                    ) : (
-                      <FiEye className="h-5 w-5 text-gray-400" />
-                    )}
-                  </button>
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="btn btn-primary w-full"
-              >
-                {loading ? (
-                  <>
-                    <div className="loading-spinner"></div>
-                    Signing in...
-                  </>
-                ) : (
-                  'Sign in'
-                )}
-              </button>
-            </form>
-
-            <div className="mt-6 text-center">
-              <p className="text-sm text-gray-500">
-                Demo credentials: admin@sachinthya.com / admin123
-              </p>
+          <div className="form-field">
+            <label htmlFor="email" className="field-label">Email</label>
+            <div className="input-wrapper">
+              <input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="form-input"
+                placeholder="Enter your email"
+                required
+              />
             </div>
           </div>
-        </div>
+
+          <div className="form-field">
+            <label htmlFor="password" className="field-label">Password</label>
+            <div className="input-wrapper">
+              <input
+                id="password"
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="form-input"
+                placeholder="Enter your password"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="password-toggle"
+                title={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? <FiEyeOff /> : <FiEye />}
+              </button>
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="login-button"
+          >
+            {loading ? (
+              <>
+                <div className="button-spinner"></div>
+                Signing in...
+              </>
+            ) : (
+              'Sign In'
+            )}
+          </button>
+        </form>
       </div>
     </div>
   )

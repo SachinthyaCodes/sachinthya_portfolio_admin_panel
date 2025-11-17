@@ -16,6 +16,7 @@ const navItems = [
   { name: 'testimonials', href: '/dashboard/testimonials' },
   { name: 'blog', href: '/dashboard/blog' },
   { name: 'inquiries', href: '/dashboard/inquiries' },
+  { name: 'security', href: '/dashboard/security' },
   { name: 'settings', href: '/dashboard/settings' },
 ]
 
