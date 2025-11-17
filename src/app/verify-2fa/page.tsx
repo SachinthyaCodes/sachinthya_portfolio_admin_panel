@@ -3,6 +3,7 @@
 import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import TwoFactorVerify from '@/components/auth/TwoFactorVerify';
+import CustomLoadingSpinner from '@/components/ui/CustomLoadingSpinner';
 import '../../styles/two-factor.css';
 
 function TwoFactorContent() {
@@ -34,10 +35,8 @@ function TwoFactorContent() {
 
   if (!tempToken) {
     return (
-      <div className="loading-container">
-        <div>Loading...</div>
-      </div>
-    );
+      <CustomLoadingSpinner message="Loading..." fullScreen={true} />
+    )
   }
 
   return (
@@ -52,11 +51,9 @@ function TwoFactorContent() {
 export default function TwoFactorPage() {
   return (
     <Suspense fallback={
-      <div className="loading-container">
-        <div>Loading...</div>
-      </div>
+      <CustomLoadingSpinner message="Loading..." fullScreen={true} />
     }>
       <TwoFactorContent />
     </Suspense>
-  );
+  )
 }

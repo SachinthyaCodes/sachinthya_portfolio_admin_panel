@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { FaTimes, FaPlus } from 'react-icons/fa'
 import ProjectForm from '@/components/projects/ProjectForm'
 import ConfirmModal from '@/components/ui/ConfirmModal'
-import LoadingSpinner from '@/components/ui/LoadingSpinner'
+import CustomLoadingSpinner from '@/components/ui/CustomLoadingSpinner'
 import EmptyState from '@/components/ui/EmptyState'
 import { API_ENDPOINTS } from '../../../lib/api'
 import './projects.css'
@@ -284,9 +284,7 @@ export default function ProjectsPage() {
 
   if (loading) {
     return (
-      <div className="projects-page-split">
-        <LoadingSpinner message="Loading projects..." />
-      </div>
+      <CustomLoadingSpinner message="Loading projects..." fullScreen={true} />
     )
   }
 

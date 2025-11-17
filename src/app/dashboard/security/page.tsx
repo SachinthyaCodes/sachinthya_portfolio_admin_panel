@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { FiShield, FiCheck, FiX, FiSettings } from 'react-icons/fi';
 import TwoFactorSetup from '@/components/auth/TwoFactorSetup';
+import CustomLoadingSpinner from '@/components/ui/CustomLoadingSpinner';
 import '../../../styles/two-factor.css';
 
 interface User {
@@ -93,12 +94,8 @@ export default function SecurityPage() {
 
   if (loading) {
     return (
-      <div className="security-page">
-        <div className="loading-container">
-          <div>Loading...</div>
-        </div>
-      </div>
-    );
+      <CustomLoadingSpinner message="Loading..." fullScreen={true} />
+    )
   }
 
   if (showSetup) {

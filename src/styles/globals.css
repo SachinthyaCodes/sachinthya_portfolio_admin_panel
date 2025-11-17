@@ -1,6 +1,7 @@
 /* Modern Dark Admin Panel - Extracted from Main Portfolio Theme */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&family=Nunito+Sans:wght@300;400;500;600;700&display=swap');
 @import './two-factor.css';
+@import './dashboard-home.css';
 
 /* Dark Theme Variables - From Main Portfolio */
 :root {
@@ -95,6 +96,123 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+}
+
+/* Inline Loading Spinner - Minimalist version for buttons */
+.inline-loading-spinner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-top: 1px solid rgba(255, 255, 255, 0.8);
+  animation: minimalistSpin 1s linear infinite;
+}
+
+.inline-loading-logo {
+  filter: brightness(0) invert(1);
+  opacity: 0.8;
+}
+
+/* Minimalist Loading Spinner - Circular Design */
+.custom-loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  min-height: 200px;
+}
+
+.fullscreen-loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--color-background);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.minimalist-loading-spinner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  border-radius: 50%;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-top: 1px solid rgba(255, 255, 255, 0.6);
+  border-right: 1px solid rgba(255, 255, 255, 0.3);
+  animation: smoothSpin 2s linear infinite;
+}
+
+.spinner-logo {
+  filter: brightness(0) invert(1);
+  opacity: 0.8;
+  transition: all 0.3s ease;
+  position: absolute;
+}
+
+.loading-message {
+  color: var(--color-text-light);
+  font-size: 0.9rem;
+  font-weight: 300;
+  text-align: center;
+  margin: 0;
+  opacity: 0.7;
+  letter-spacing: 0.5px;
+}
+
+/* Smooth spin animation */
+@keyframes smoothSpin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Message pulse animation */
+@keyframes messagePulse {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+/* Size variations - Cleaner approach */
+.minimalist-loading-spinner.size-sm {
+  width: 2rem;
+  height: 2rem;
+}
+
+.minimalist-loading-spinner.size-md {
+  width: 3rem;
+  height: 3rem;
+}
+
+.minimalist-loading-spinner.size-lg {
+  width: 4rem;
+  height: 4rem;
+}
+
+/* Loading container improvements */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  padding: 2rem;
+  color: var(--color-text-light);
 }
 
 /* Utility class to prevent body scroll when modal is open */
@@ -402,13 +520,13 @@ nav, nav a, .nav-link, button, .btn {
 .floating-nav-container {
   display: flex;
   align-items: center;
-  gap: 0;
+  gap: 0.5rem;
   background: var(--glass-bg);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--color-border);
   border-radius: 3rem;
-  padding: 0.75rem 1rem;
+  padding: 0.875rem 1.5rem;
   box-shadow: 
     0 10px 25px rgba(0, 0, 0, 0.3),
     0 0 0 1px rgba(255, 255, 255, 0.05),
@@ -437,7 +555,7 @@ nav, nav a, .nav-link, button, .btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.5rem 1rem;
+  padding: 0.625rem 1.25rem;
   border: none;
   background: transparent;
   color: var(--color-text-light);
