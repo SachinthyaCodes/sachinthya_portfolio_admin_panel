@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { FaTimes, FaPlus } from 'react-icons/fa'
+import toast from 'react-hot-toast'
 import ProjectForm from '@/components/projects/ProjectForm'
 import ConfirmModal from '@/components/ui/ConfirmModal'
 import CustomLoadingSpinner from '@/components/ui/CustomLoadingSpinner'
@@ -88,11 +89,14 @@ export default function ProjectsPage() {
       if (response.ok) {
         await fetchProjects()
         setShowCreateModal(false)
+        toast.success('Project created successfully!')
         return true
       }
+      toast.error('Failed to create project')
       return false
     } catch (error) {
       console.error('Error creating project:', error)
+      toast.error('Error creating project')
       return false
     }
   }
@@ -112,13 +116,17 @@ export default function ProjectsPage() {
 
       if (response.ok) {
         await fetchProjects()
+        // Reset to "Add New Project" mode after successful edit
         setEditingProject(null)
         setShowEditModal(false)
+        toast.success('Project updated successfully!')
         return true
       }
+      toast.error('Failed to update project')
       return false
     } catch (error) {
       console.error('Error updating project:', error)
+      toast.error('Error updating project')
       return false
     }
   }
@@ -139,9 +147,13 @@ export default function ProjectsPage() {
         await fetchProjects()
         setDeleteModal({ show: false, project: null })
         setEditingProject(null) // Reset form if deleted project was being edited
+        toast.success('Project deleted successfully!')
+      } else {
+        toast.error('Failed to delete project')
       }
     } catch (error) {
       console.error('Error deleting project:', error)
+      toast.error('Error deleting project')
     }
   }
 
@@ -161,9 +173,13 @@ export default function ProjectsPage() {
           await reorderProjectsAfterHiding(project.order)
         }
         await fetchProjects()
+        toast.success(project.isShown ? 'Project hidden' : 'Project shown')
+      } else {
+        toast.error('Failed to toggle visibility')
       }
     } catch (error) {
       console.error('Error toggling visibility:', error)
+      toast.error('Error toggling visibility')
     }
   }
 
@@ -197,7 +213,10 @@ export default function ProjectsPage() {
 
   const handleProjectClick = (project: Project) => {
     setEditingProject(project)
-    setShowEditModal(true)
+    // On mobile, show modal; on desktop, form updates inline
+    if (window.innerWidth < 1024) {
+      setShowEditModal(true)
+    }
   }
 
   const handleDragStart = (e: React.DragEvent, project: Project) => {
@@ -331,9 +350,6 @@ export default function ProjectsPage() {
                       <span className="project-item-category">{project.category}</span>
                     </div>
                     <div className="project-item-status">
-                      <span className="project-order">
-                        {project.isShown ? `#${project.order || 1}` : '●'}
-                      </span>
                       <label className="visibility-toggle" onClick={(e) => e.stopPropagation()}>
                         <input
                           type="checkbox"
@@ -432,7 +448,15 @@ export default function ProjectsPage() {
             <div className="modal-content-form">
               <ProjectForm
                 project={editingProject}
-                onSubmit={handleEditProject}
+                onSubmit={async (data) => {
+                  const success = await handleEditProject(data)
+                  if (success) {
+                    // After successful edit, show create form on mobile
+                    setShowEditModal(false)
+                    setShowCreateModal(true)
+                  }
+                  return success
+                }}
                 onClose={() => {
                   setShowEditModal(false)
                   setEditingProject(null)

@@ -123,8 +123,13 @@ export async function PATCH(
         
         // Convert FormData to object
         body = {};
+        const imageFile = formData.get('image') as File | null;
+        
         formData.forEach((value, key) => {
-          if (key === 'tech' || key === 'links') {
+          if (key === 'image') {
+            // Skip - we'll handle image separately
+            return;
+          } else if (key === 'tech' || key === 'links') {
             try {
               body[key] = value ? JSON.parse(value as string) : [];
             } catch {
@@ -138,6 +143,27 @@ export async function PATCH(
             body[key] = value;
           }
         });
+
+        // Handle image upload if present
+        if (imageFile && imageFile.size > 0) {
+          // Get the current project to find old image URL
+          const supabase = createSupabaseClient();
+          const { data: currentProject } = await supabase
+            .from('projects')
+            .select('image_url')
+            .eq('id', params.id)
+            .single();
+
+          const { replaceImage } = await import('@/lib/storage');
+          const newImageUrl = await replaceImage(currentProject?.image_url, imageFile, 'projects');
+          
+          if (newImageUrl) {
+            body.imageUrl = newImageUrl;
+          } else {
+            console.error('Failed to upload/replace image');
+          }
+        }
+        
         console.log('✅ Converted FormData to object:', body);
       } else {
         // Handle JSON
@@ -251,7 +277,14 @@ export async function PUT(
         
         // Convert FormData to object
         body = {};
+        const imageFile = formData.get('image') as File | null;
+        
         formData.forEach((value, key) => {
+          if (key === 'image') {
+            // Skip - we'll handle image separately
+            return;
+          }
+
           if (key === 'tech' || key === 'links') {
             try {
               body[key] = value ? JSON.parse(value as string) : [];
@@ -266,6 +299,27 @@ export async function PUT(
             body[key] = value;
           }
         });
+
+        // Handle image upload if present
+        if (imageFile && imageFile.size > 0) {
+          // Get the current project to find old image URL
+          const supabase = createSupabaseClient();
+          const { data: currentProject } = await supabase
+            .from('projects')
+            .select('image_url')
+            .eq('id', params.id)
+            .single();
+
+          const { replaceImage } = await import('@/lib/storage');
+          const newImageUrl = await replaceImage(currentProject?.image_url, imageFile, 'projects');
+          
+          if (newImageUrl) {
+            body.imageUrl = newImageUrl;
+          } else {
+            console.error('Failed to upload/replace image');
+          }
+        }
+
         console.log('✅ Converted FormData to object:', body);
       } else {
         // Handle JSON
@@ -371,6 +425,15 @@ export async function DELETE(
 
     const supabase = createSupabaseClient();
 
+    // Get the project first to retrieve image URL
+    const { data: project } = await supabase
+      .from('projects')
+      .select('image_url')
+      .eq('id', params.id)
+      .eq('user_id', decoded.userId)
+      .single();
+
+    // Delete the project from database
     const { error } = await supabase
       .from('projects')
       .delete()
@@ -383,6 +446,12 @@ export async function DELETE(
         { error: 'Failed to delete project' },
         { status: 500 }
       );
+    }
+
+    // Delete associated image from storage if exists
+    if (project?.image_url) {
+      const { deleteImage } = await import('@/lib/storage');
+      await deleteImage(project.image_url);
     }
 
     return NextResponse.json({ message: 'Project deleted successfully' });

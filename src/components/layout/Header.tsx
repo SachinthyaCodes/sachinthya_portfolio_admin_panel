@@ -8,7 +8,9 @@ export default function Header() {
   const router = useRouter()
 
   const handleLogout = () => {
+    localStorage.removeItem('token')
     localStorage.removeItem('adminToken')
+    localStorage.removeItem('tempToken')
     router.push('/login')
   }
 

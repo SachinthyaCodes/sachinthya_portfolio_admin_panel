@@ -117,6 +117,7 @@ export async function POST(request: NextRequest) {
     const linksString = formData.get('links') as string;
     const isShown = formData.get('isShown') === 'true';
     const order = formData.get('order') ? parseInt(formData.get('order') as string) : undefined;
+    const imageFile = formData.get('image') as File | null;
 
     if (!name || !description || !category) {
       return NextResponse.json(
@@ -143,6 +144,16 @@ export async function POST(request: NextRequest) {
       links = [];
     }
 
+    // Handle image upload to Supabase Storage
+    let imageUrl: string | null = null;
+    if (imageFile && imageFile.size > 0) {
+      const { uploadImage } = await import('@/lib/storage');
+      imageUrl = await uploadImage(imageFile, 'projects');
+      if (!imageUrl) {
+        console.error('Failed to upload image');
+      }
+    }
+
     // Get the next order index if not provided
     let orderIndex = order;
     if (!orderIndex) {
@@ -164,6 +175,7 @@ export async function POST(request: NextRequest) {
       comprehensive_summary: comprehensiveSummary || description,
       tech: Array.isArray(tech) ? tech : [],
       links: Array.isArray(links) ? links : [],
+      image_url: imageUrl,
       is_shown: isShown || false,
       order_index: orderIndex,
       user_id: decoded.userId,

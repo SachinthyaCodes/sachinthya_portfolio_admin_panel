@@ -8,8 +8,8 @@ export async function PATCH(
   { params }: { params: { id: string } }
 ) {
   try {
-    const user = authenticateRequest(request);
-    if (!user) {
+    const authResult = authenticateRequest(request);
+    if (!authResult.authenticated || !authResult.user) {
       return NextResponse.json(
         { error: 'Authorization required' },
         { status: 401 }
@@ -23,7 +23,7 @@ export async function PATCH(
       .from('projects')
       .select('*')
       .eq('id', params.id)
-      .eq('user_id', user.userId)
+      .eq('user_id', authResult.user.userId)
       .single();
 
     if (fetchError || !project) {
@@ -42,7 +42,7 @@ export async function PATCH(
       const { data: shownProjects } = await supabase
         .from('projects')
         .select('display_order')
-        .eq('user_id', user.userId)
+        .eq('user_id', authResult.user.userId)
         .eq('is_shown', true)
         .not('display_order', 'is', null)
         .order('display_order', { ascending: true });
@@ -77,7 +77,7 @@ export async function PATCH(
         updated_at: new Date().toISOString()
       })
       .eq('id', params.id)
-      .eq('user_id', user.userId)
+      .eq('user_id', authResult.user.userId)
       .select()
       .single();
 
@@ -91,7 +91,7 @@ export async function PATCH(
 
     // If we hid a project and it had a display order, reorder remaining projects
     if (!newIsShown && project.display_order) {
-      await reorderDisplayAfterHiding(user.userId, project.display_order);
+      await reorderDisplayAfterHiding(authResult.user.userId, project.display_order);
     }
 
     return NextResponse.json(updatedProject);

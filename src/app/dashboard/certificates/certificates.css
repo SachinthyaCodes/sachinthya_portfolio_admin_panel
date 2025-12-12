@@ -1,0 +1,56 @@
+/* Import Projects Layout - Base styles */
+@import '../projects/projects.css';
+
+/* Certificate-specific card styles */
+.certificate-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.certificate-date {
+  display: block;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 0.25rem;
+}
+
+.certificate-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.25rem;
+}
+
+.certificate-type-pill {
+  padding: 0.15rem 0.6rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.9);
+  text-transform: capitalize;
+}
+
+.certificate-type-pill.badge {
+  background: rgba(59, 130, 246, 0.15);
+  color: #9cc5ff;
+}
+
+.certificate-type-pill.certification {
+  background: rgba(16, 185, 129, 0.15);
+  color: #86efac;
+}
+
+/* Form toggle field alignment */
+.toggle-field {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.toggle-field span {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.8);
+}

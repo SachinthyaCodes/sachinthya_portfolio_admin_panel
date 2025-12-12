@@ -8,6 +8,7 @@ const navItems = [
   { name: '', href: '/dashboard', isIcon: true }, // Home icon
   { name: 'work', href: '/dashboard/projects' },
   { name: 'testimonials', href: '/dashboard/testimonials' },
+  { name: 'certificates', href: '/dashboard/certificates' },
   { name: 'blog', href: '/dashboard/blog' },
   { name: 'inquiries', href: '/dashboard/inquiries' },
   { name: 'security', href: '/dashboard/security' },
@@ -23,7 +24,9 @@ export default function FloatingNav() {
   }
 
   const handleLogout = () => {
+    localStorage.removeItem('token')
     localStorage.removeItem('adminToken')
+    localStorage.removeItem('tempToken')
     router.push('/login')
   }
 

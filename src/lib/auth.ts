@@ -27,10 +27,14 @@ export function verifyAuthToken(token: string): AuthUser | null {
   }
 }
 
-export function authenticateRequest(request: NextRequest): AuthUser | null {
+export function authenticateRequest(request: NextRequest): { authenticated: boolean; error?: string; user?: AuthUser } {
   const token = getAuthToken(request);
   if (!token) {
-    return null;
+    return { authenticated: false, error: 'No authentication token provided' };
   }
-  return verifyAuthToken(token);
+  const user = verifyAuthToken(token);
+  if (!user) {
+    return { authenticated: false, error: 'Invalid or expired token' };
+  }
+  return { authenticated: true, user };
 }

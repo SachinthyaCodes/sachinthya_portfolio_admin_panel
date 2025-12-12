@@ -5,13 +5,15 @@ import { authenticateRequest } from '@/lib/auth';
 // POST /api/projects/reorder - Reorder projects
 export async function POST(request: NextRequest) {
   try {
-    const user = authenticateRequest(request);
-    if (!user) {
+    const authResult = authenticateRequest(request);
+    if (!authResult.authenticated || !authResult.user) {
       return NextResponse.json(
         { error: 'Authorization required' },
         { status: 401 }
       );
     }
+
+    const user = authResult.user;
 
     const body = await request.json();
     const { projects } = body; // Array of {id, order_index}
