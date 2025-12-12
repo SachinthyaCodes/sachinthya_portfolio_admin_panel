@@ -98,6 +98,30 @@
 
   .draggable-floating-button:active .floating-button-ripple {
     width: 80px;
+  }
+
+  /* Notification indicator on floating button */
+  .floating-button-notification {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 12px;
+    height: 12px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 50%;
+    border: 2px solid var(--glass-bg);
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.6);
+    animation: pulse-notification 2s ease-in-out infinite;
+    z-index: 3;
+  }
+
+  @keyframes pulse-notification {
+    0%, 100% {
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.6);
+    }
+    50% {
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+    }
     height: 80px;
   }
 }
@@ -215,6 +239,24 @@
     overflow: visible;
     text-overflow: clip;
     line-height: 1.4;
+  }
+
+  /* Notification badge for menu items */
+  .notification-badge {
+    min-width: 20px;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    color: #000;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 6px;
+    margin-left: 8px;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+    animation: pulse-notification 2s ease-in-out infinite;
   }
 
   /* Logout item styling - Minimalistic */

@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { FiX } from 'react-icons/fi'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useUnreadInquiries } from '@/hooks/useUnreadInquiries'
 
 interface Position {
   x: number
@@ -30,6 +31,7 @@ export default function DraggableFloatingNav() {
   const buttonRef = useRef<HTMLDivElement>(null)
   const pathname = usePathname()
   const router = useRouter()
+  const { unreadCount } = useUnreadInquiries()
 
   // Handle mouse/touch events for dragging
   const handleStart = (clientX: number, clientY: number) => {
@@ -215,6 +217,11 @@ export default function DraggableFloatingNav() {
           )}
         </div>
         
+        {/* Notification indicator on button */}
+        {!isMenuOpen && unreadCount > 0 && (
+          <div className="floating-button-notification" title={`${unreadCount} unread inquiries`} />
+        )}
+        
         {/* Ripple effect */}
         <div className="floating-button-ripple" />
       </motion.div>
@@ -259,6 +266,11 @@ export default function DraggableFloatingNav() {
                   transition={{ delay: index * 0.05 }}
                 >
                   <span className="menu-item-text">{item.name}</span>
+                  {item.name === 'inquiries' && unreadCount > 0 && (
+                    <span className="notification-badge" title={`${unreadCount} unread`}>
+                      {unreadCount > 9 ? '9+' : unreadCount}
+                    </span>
+                  )}
                 </motion.button>
               ))}
 

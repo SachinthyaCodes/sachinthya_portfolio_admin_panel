@@ -3,6 +3,7 @@
 import { usePathname, useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { FiLogOut } from 'react-icons/fi'
+import { useUnreadInquiries } from '@/hooks/useUnreadInquiries'
 
 const navItems = [
   { name: '', href: '/dashboard', isIcon: true }, // Home icon
@@ -18,6 +19,9 @@ const navItems = [
 export default function FloatingNav() {
   const pathname = usePathname()
   const router = useRouter()
+  const { unreadCount } = useUnreadInquiries()
+
+  console.log('FloatingNav - unreadCount:', unreadCount)
 
   const handleNavClick = (href: string) => {
     router.push(href)
@@ -54,7 +58,14 @@ export default function FloatingNav() {
                   />
                 </div>
               ) : (
-                <span className="floating-nav-text">{item.name}</span>
+                <>
+                  <span className="floating-nav-text">{item.name}</span>
+                  {item.name === 'inquiries' && unreadCount > 0 && (
+                    <span className="notification-dot" title={`${unreadCount} unread`}>
+                      {unreadCount > 9 ? '9+' : unreadCount}
+                    </span>
+                  )}
+                </>
               )}
             </button>
           )

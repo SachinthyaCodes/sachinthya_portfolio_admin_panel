@@ -1,14 +1,13 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
-import { FaTimes } from 'react-icons/fa'
+import { motion, AnimatePresence } from 'framer-motion'
+import { FaTimes, FaTrash, FaEnvelope, FaEnvelopeOpen, FaCheck } from 'react-icons/fa'
 import { API_ENDPOINTS } from '@/lib/api'
-import { Button } from '@/components/ui'
 import ConfirmModal from '@/components/ui/ConfirmModal'
 import CustomLoadingSpinner from '@/components/ui/CustomLoadingSpinner'
 import EmptyState from '@/components/ui/EmptyState'
-import styles from './inquiries.module.css'
+import './inquiries.css'
 
 interface Inquiry {
   id: string
@@ -118,9 +117,15 @@ export default function InquiriesPage() {
       }
 
       // Update local state
-      setInquiries(inquiries.map(inq => 
+      const updatedInquiries = inquiries.map(inq => 
         inq.id === id ? { ...inq, status } : inq
-      ))
+      )
+      setInquiries(updatedInquiries)
+      
+      // Update selected inquiry to reflect the change immediately
+      if (selectedInquiry?.id === id) {
+        setSelectedInquiry({ ...selectedInquiry, status })
+      }
     } catch (err) {
       console.error('Error updating status:', err)
     }
@@ -168,20 +173,27 @@ export default function InquiriesPage() {
 
   const getStatusBadge = (status: Inquiry['status']) => {
     const colors = {
-      new: '#3b82f6',
-      'in-progress': '#f59e0b',
-      resolved: '#10b981',
+      new: 'rgba(255, 255, 255, 0.7)',
+      'in-progress': 'rgba(255, 255, 255, 0.5)',
+      resolved: 'rgba(255, 255, 255, 0.4)',
+    }
+    const bgColors = {
+      new: 'rgba(255, 255, 255, 0.08)',
+      'in-progress': 'rgba(255, 255, 255, 0.05)',
+      resolved: 'rgba(255, 255, 255, 0.03)',
     }
     return (
       <span
         style={{
-          padding: '4px 12px',
-          borderRadius: '12px',
-          fontSize: '12px',
+          padding: '0.375rem 0.875rem',
+          borderRadius: '6px',
+          fontSize: '0.75rem',
           fontWeight: '600',
-          backgroundColor: `${colors[status]}20`,
+          backgroundColor: bgColors[status],
           color: colors[status],
           textTransform: 'capitalize',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          letterSpacing: '0.3px',
         }}
       >
         {status === 'in-progress' ? 'In Progress' : status}
@@ -202,21 +214,27 @@ export default function InquiriesPage() {
 
   if (loading) {
     return (
-      <div className={styles.loadingContainer}>
+      <div className="loading-container">
         <CustomLoadingSpinner />
       </div>
     )
   }
 
   return (
-    <div className={styles.container}>
-      <div className={styles.header}>
-        <h1 className={styles.title}>Contact Inquiries</h1>
-        <div className={styles.filters}>
+    <div className="inquiries-page">
+      {/* Header */}
+      <div className="page-header">
+        <div className="header-content">
+          <h1 className="page-title">Contact Inquiries</h1>
+          <div className="inquiry-count">
+            {inquiries.length} {inquiries.length === 1 ? 'Message' : 'Messages'}
+          </div>
+        </div>
+        <div className="header-filters">
           <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
-            className={styles.filterSelect}
+            className="filter-select"
           >
             <option value="all">All Status</option>
             <option value="new">New</option>
@@ -226,7 +244,7 @@ export default function InquiriesPage() {
           <select
             value={filterRead}
             onChange={(e) => setFilterRead(e.target.value)}
-            className={styles.filterSelect}
+            className="filter-select"
           >
             <option value="all">All Messages</option>
             <option value="false">Unread</option>
@@ -235,98 +253,206 @@ export default function InquiriesPage() {
         </div>
       </div>
 
+      {/* Error Message */}
       {error && (
-        <div className={styles.errorMessage}>
-          <p>Error: {error}</p>
-          <Button onClick={fetchInquiries}>Retry</Button>
-        </div>
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="error-banner"
+        >
+          <p>⚠️ {error}</p>
+          <button onClick={fetchInquiries} className="retry-btn">Retry</button>
+        </motion.div>
       )}
 
-      <div className={styles.layout}>
-        <div className={styles.listSection}>
+      {/* Layout */}
+      <div className="inquiries-layout">
+        {/* Inquiries List Sidebar */}
+        <div className="inquiries-sidebar">
           {inquiries.length === 0 ? (
             <EmptyState
               title="No inquiries found"
               description="When people contact you through the portfolio site, their messages will appear here."
             />
           ) : (
-            <div className={styles.inquiriesList}>
-              {inquiries.map((inquiry) => (
+            <div className="inquiries-list">
+              {inquiries.map((inquiry, index) => (
                 <motion.div
                   key={inquiry.id}
-                  className={`${styles.inquiryCard} ${
-                    selectedInquiry?.id === inquiry.id ? styles.selected : ''
-                  } ${!inquiry.is_read ? styles.unread : ''}`}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  className={`inquiry-card ${
+                    selectedInquiry?.id === inquiry.id ? 'active' : ''
+                  } ${!inquiry.is_read ? 'unread' : ''}`}
                   onClick={() => viewInquiry(inquiry)}
-                  whileHover={{ scale: 1.01 }}
-                  transition={{ duration: 0.2 }}
                 >
-                  <div className={styles.cardHeader}>
-                    <div className={styles.cardTitle}>
-                      {!inquiry.is_read && <span className={styles.unreadDot} />}
-                      <h3>{inquiry.name}</h3>
+                  <div className="inquiry-card-header">
+                    <div className="inquiry-name">
+                      {!inquiry.is_read && <span className="unread-indicator" />}
+                      {inquiry.name}
                     </div>
                     {getStatusBadge(inquiry.status)}
                   </div>
-                  <p className={styles.cardSubject}>{inquiry.subject}</p>
-                  <p className={styles.cardEmail}>{inquiry.email}</p>
-                  <p className={styles.cardDate}>{formatDate(inquiry.created_at)}</p>
+                  <div className="inquiry-subject">{inquiry.subject}</div>
+                  <div className="inquiry-meta">
+                    <span className="inquiry-email">{inquiry.email}</span>
+                    <span className="inquiry-date">{formatDate(inquiry.created_at)}</span>
+                  </div>
                 </motion.div>
               ))}
             </div>
           )}
         </div>
 
-        {selectedInquiry && (
-          <div className={styles.detailSection}>
-            <div className={styles.detailHeader}>
-              <div>
-                <h2>{selectedInquiry.name}</h2>
-                <p className={styles.detailEmail}>{selectedInquiry.email}</p>
+        {/* Detail View */}
+        <AnimatePresence mode="wait">
+          {selectedInquiry ? (
+            <motion.div
+              key={selectedInquiry.id}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.3 }}
+              className="inquiry-detail"
+            >
+              <div className="detail-header">
+                <div className="detail-title-section">
+                  <div className="detail-name-row">
+                    <h2 className="detail-name">{selectedInquiry.name}</h2>
+                    {selectedInquiry.is_read ? (
+                      <FaEnvelopeOpen className="read-icon" />
+                    ) : (
+                      <FaEnvelope className="unread-icon" />
+                    )}
+                  </div>
+                  <a href={`mailto:${selectedInquiry.email}`} className="detail-email">
+                    {selectedInquiry.email}
+                  </a>
+                </div>
+                <button
+                  onClick={() => openDeleteModal(selectedInquiry.id)}
+                  className="delete-btn"
+                  title="Delete inquiry"
+                >
+                  <FaTrash />
+                </button>
               </div>
-              <Button
-                variant="danger"
-                onClick={() => openDeleteModal(selectedInquiry.id)}
-              >
-                Delete
-              </Button>
-            </div>
 
-            <div className={styles.detailMeta}>
-              <span>{getStatusBadge(selectedInquiry.status)}</span>
-              <span className={styles.detailDate}>
-                {formatDate(selectedInquiry.created_at)}
-              </span>
-            </div>
+              <div className="detail-meta-row">
+                {getStatusBadge(selectedInquiry.status)}
+                <span className="detail-timestamp">{formatDate(selectedInquiry.created_at)}</span>
+              </div>
 
-            <div className={styles.detailSubject}>
-              <strong>Subject:</strong> {selectedInquiry.subject}
-            </div>
+              <div className="detail-content">
+                <div className="content-section">
+                  <label className="section-label">Subject</label>
+                  <p className="subject-text">{selectedInquiry.subject}</p>
+                </div>
 
-            <div className={styles.detailMessage}>
-              <strong>Message:</strong>
-              <p>{selectedInquiry.message}</p>
-            </div>
+                <div className="content-section">
+                  <label className="section-label">Message</label>
+                  <div className="message-box">
+                    {selectedInquiry.message}
+                  </div>
+                </div>
+              </div>
 
-            <div className={styles.detailActions}>
-              <label htmlFor="status-select">Update Status:</label>
-              <select
-                id="status-select"
-                value={selectedInquiry.status}
-                onChange={(e) =>
-                  updateStatus(selectedInquiry.id, e.target.value as Inquiry['status'])
-                }
-                className={styles.statusSelect}
-              >
-                <option value="new">New</option>
-                <option value="in-progress">In Progress</option>
-                <option value="resolved">Resolved</option>
-              </select>
-            </div>
-          </div>
-        )}
+              <div className="detail-actions">
+                <label className="action-label">Update Status</label>
+                <div className="status-selector">
+                  {(['new', 'in-progress', 'resolved'] as const).map((status) => (
+                    <button
+                      key={status}
+                      onClick={() => updateStatus(selectedInquiry.id, status)}
+                      className={`status-btn ${selectedInquiry.status === status ? 'active' : ''}`}
+                    >
+                      {selectedInquiry.status === status && <FaCheck className="check-icon" />}
+                      <span>{status === 'in-progress' ? 'In Progress' : status.charAt(0).toUpperCase() + status.slice(1)}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="no-selection"
+            >
+              <div className="no-selection-content">
+                <FaEnvelope className="no-selection-icon" />
+                <h3>Select an inquiry</h3>
+                <p>Choose an inquiry from the list to view details</p>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
+      {/* Mobile Modal */}
+      {selectedInquiry && (
+        <div className="mobile-inquiry-modal">
+          <div 
+            className="mobile-modal-backdrop"
+            onClick={() => setSelectedInquiry(null)}
+          />
+          <div className="mobile-modal-container">
+            <div className="mobile-modal-header">
+              <h3>{selectedInquiry.name}</h3>
+              <button onClick={() => setSelectedInquiry(null)} className="mobile-close-btn">
+                <FaTimes />
+              </button>
+            </div>
+            
+            <div className="mobile-modal-body">
+              <div className="mobile-email">
+                <a href={`mailto:${selectedInquiry.email}`}>{selectedInquiry.email}</a>
+              </div>
+              
+              <div className="mobile-meta">
+                {getStatusBadge(selectedInquiry.status)}
+                <span>{formatDate(selectedInquiry.created_at)}</span>
+              </div>
+              
+              <div className="mobile-subject">
+                <strong>Subject:</strong>
+                <p>{selectedInquiry.subject}</p>
+              </div>
+              
+              <div className="mobile-message">
+                <strong>Message:</strong>
+                <div className="mobile-message-text">{selectedInquiry.message}</div>
+              </div>
+              
+              <div className="mobile-status-actions">
+                {(['new', 'in-progress', 'resolved'] as const).map((status) => (
+                  <button
+                    key={status}
+                    onClick={() => updateStatus(selectedInquiry.id, status)}
+                    className={`mobile-status-btn ${selectedInquiry.status === status ? 'active' : ''}`}
+                  >
+                    {selectedInquiry.status === status && <FaCheck />}
+                    {status === 'in-progress' ? 'In Progress' : status.charAt(0).toUpperCase() + status.slice(1)}
+                  </button>
+                ))}
+              </div>
+              
+              <button
+                onClick={() => {
+                  openDeleteModal(selectedInquiry.id)
+                  setSelectedInquiry(null)
+                }}
+                className="mobile-delete-btn"
+              >
+                <FaTrash /> Delete Inquiry
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
       <ConfirmModal
         isOpen={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}

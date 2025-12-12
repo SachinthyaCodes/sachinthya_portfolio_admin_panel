@@ -3,7 +3,6 @@
 import { Toaster } from 'react-hot-toast'
 import FloatingNav from '@/components/layout/FloatingNav'
 import DraggableFloatingNav from '@/components/layout/DraggableFloatingNav'
-import MinimalParticles from '@/components/MinimalParticles/MinimalParticles'
 import '@/components/layout/DraggableFloatingNav.css'
 
 export default function DashboardLayout({
@@ -38,7 +37,6 @@ export default function DashboardLayout({
           },
         }}
       />
-      <MinimalParticles />
       <main className="content-area-floating">
         {children}
       </main>

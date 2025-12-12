@@ -532,7 +532,7 @@ nav, nav a, .nav-link, button, .btn {
     0 0 0 1px rgba(255, 255, 255, 0.05),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
   position: relative;
-  overflow: hidden;
+  overflow: visible; /* Changed to visible to show notification dots */
 }
 
 .floating-nav-container::before {
@@ -568,7 +568,7 @@ nav, nav a, .nav-link, button, .btn {
   font-size: 0.9rem;
   letter-spacing: 0.02em;
   white-space: nowrap;
-  overflow: hidden;
+  overflow: visible; /* Changed to visible to show notification dot */
 }
 
 .floating-nav-item::before {
@@ -663,6 +663,38 @@ nav, nav a, .nav-link, button, .btn {
 .floating-nav-item.logout-item:hover .logout-icon {
   transform: scale(1.1);
   filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
+}
+
+/* Notification Dot for FloatingNav */
+.notification-dot {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  min-width: 18px;
+  height: 18px;
+  background: rgba(255, 255, 255, 0.95);
+  color: #000;
+  border-radius: 9px;
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 5px;
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.6),
+              0 2px 4px rgba(0, 0, 0, 0.3);
+  animation: pulse-notification 2s ease-in-out infinite;
+  z-index: 10;
+  border: 1.5px solid rgba(0, 0, 0, 0.8);
+}
+
+@keyframes pulse-notification {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 16px rgba(255, 255, 255, 0.6);
+  }
 }
 
 /* Floating animation for the entire nav */
