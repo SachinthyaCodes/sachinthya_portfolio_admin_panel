@@ -26,7 +26,9 @@ interface CertificateFormProps {
 const CERTIFICATE_PROVIDERS = [
   'AWS',
   'Azure',
+  'Google',
   'Google Cloud',
+  'Linux Foundation',
   'FreeCodeCamp',
   'DataCamp',
   'Coursera',
