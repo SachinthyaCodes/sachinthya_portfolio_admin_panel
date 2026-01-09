@@ -9,7 +9,8 @@
     "lint": "next lint",
     "deploy": "vercel --prod",
     "deploy:preview": "vercel",
-    "env:check": "node -e \"console.log('Environment check passed')\" && echo 'All environment variables should be configured in Vercel dashboard'"
+    "env:check": "node -e \"console.log('Environment check passed')\" && echo 'All environment variables should be configured in Vercel dashboard'",
+    "test:email": "node scripts/test-email.js"
   },
   "dependencies": {
     "@supabase/ssr": "^0.0.10",
@@ -36,6 +37,7 @@
     "react-dom": "^18.3.1",
     "react-hot-toast": "^2.4.1",
     "react-icons": "^4.12.0",
+    "resend": "^6.7.0",
     "speakeasy": "^2.0.0",
     "typescript": "^5.3.0",
     "uuid": "^13.0.0"

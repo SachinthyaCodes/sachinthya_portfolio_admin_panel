@@ -42,9 +42,20 @@ SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 # JWT Configuration
 JWT_SECRET=your_jwt_secret_key_here
 
+# Two-Factor Authentication (Optional)
+TOTP_ISSUER=Sachinthya Portfolio Admin
+
+# Email Notifications (see docs/EMAIL-NOTIFICATIONS.md)
+RESEND_API_KEY=re_xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+RESEND_FROM_EMAIL=notifications@sachinthya.dev
+ADMIN_EMAIL=admin@sachinthya.dev
+NEXT_PUBLIC_APP_URL=https://your-project.vercel.app
+
 # API Configuration  
 NEXT_PUBLIC_API_URL=/api
 ```
+
+**📧 Email Setup**: For inquiry notifications, you'll need a Resend account. See [docs/EMAIL-NOTIFICATIONS.md](docs/EMAIL-NOTIFICATIONS.md) for detailed setup instructions.
 
 ### 4. Database Setup
 

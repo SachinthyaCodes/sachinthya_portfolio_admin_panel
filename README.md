@@ -14,8 +14,9 @@ A modern full-stack admin panel for managing portfolio content, built with Next.
 - **Dashboard Overview**: Statistics, quick actions, and project management
 - **Portfolio Management**: Create, edit, delete, and reorder projects
 - **Drag & Drop**: Intuitive project reordering with visual feedback
+- **Email Notifications**: Instant email alerts for new contact form inquiries
 - **Real-time Updates**: Modern React 18 with state management
-- **Authentication**: Secure JWT-based authentication
+- **Authentication**: Secure JWT-based authentication with 2FA support
 - **Field Mapping**: Seamless database-frontend field translation
 - **Form Validation**: Comprehensive client and server-side validation
 
@@ -75,6 +76,11 @@ SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 
 # JWT Configuration
 JWT_SECRET=your_jwt_secret_key
+
+# Email Notifications (Resend)
+RESEND_API_KEY=re_xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+RESEND_FROM_EMAIL=notifications@sachinthya.dev
+ADMIN_EMAIL=admin@sachinthya.dev
 
 # API Configuration
 NEXT_PUBLIC_API_URL=/api
@@ -142,6 +148,11 @@ The application uses these Supabase tables:
 - `PUT /api/projects/[id]` - Update project (full)
 - `PATCH /api/projects/[id]` - Update project (partial)
 - `DELETE /api/projects/[id]` - Delete project
+
+### Inquiries
+- `POST /api/inquiries` - Submit new inquiry (public, sends email notification)
+- `GET /api/inquiries` - Get all inquiries (authenticated, supports filtering)
+- `DELETE /api/inquiries` - Delete inquiries (authenticated, supports bulk delete)
 
 ## 🎨 Key Components
 
