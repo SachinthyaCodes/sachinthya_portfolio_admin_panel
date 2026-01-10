@@ -23,6 +23,7 @@ const navigation = [
   { name: 'Portfolio', href: '/dashboard/portfolio', icon: FiFolder },
   { name: 'Testimonials', href: '/dashboard/testimonials', icon: FiMessageSquare },
   { name: 'Media', href: '/dashboard/media', icon: FiImage },
+  { name: 'Knowledge', href: '/dashboard/knowledge', icon: FiFolder },
   { name: 'Analytics', href: '/dashboard/analytics', icon: FiBarChart },
   { name: 'Profile', href: '/dashboard/profile', icon: FiUser },
   { name: 'Settings', href: '/dashboard/settings', icon: FiSettings },

@@ -21,6 +21,10 @@ export const API_ENDPOINTS = {
     BY_ID: (id: string) => `${API_BASE_URL}/certificates/${id}`,
     REORDER: `${API_BASE_URL}/certificates/reorder`,
     TOGGLE_VISIBILITY: (id: string) => `${API_BASE_URL}/certificates/${id}/toggle-visibility`,
+  },
+  KNOWLEDGE: {
+    BASE: `${API_BASE_URL}/knowledge`,
+    BY_ID: (id: string) => `${API_BASE_URL}/knowledge/${id}`,
   }
 }
 
